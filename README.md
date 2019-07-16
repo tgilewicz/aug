@@ -39,7 +39,7 @@ pip install -U git+https://github.com/cta-ai/aug
 | Gaussian noise | Brightness | Inversion | Rotation90 |
 |![drawing](./images/op_gauss_noise.gif "Gaussian oise")|![drawing](./images/op_global_brightness.gif "Brightness")|![drawing](./images/op_inversion.gif "Inversion")|![drawing](./images/op_rotation90.gif "Rotation90")|
 | Gaussian blur | Motion blur | Variable blur | Pixelize |
-|![drawing](./images/op_gaussian_blur.gif "Gaussian blur")|![drawing](./images/op_motion_blur.gif "Motion blur")|![drawing](./images/op_variable_blur.gif "Variable blur")|![drawing](./images/op_pixelize.gif "Pixelize")|
+|![drawing](./images/op_gaussian_blur.gif "Gaussian blur")|![drawing](./images/op_motion_blur.gif "Motion blur")|![drawing](./images/op_variable_blur.gif "Variable blur")|![drawing](./images/op_pixelize.gif "Pixelization")|
 | Median blur | Linear gradient | JPEG noise | Random Curve|
 |![drawing](./images/op_median_blur.gif "Median blur")|![drawing](./images/op_linear_gradient.gif "Linear gradient")|![drawing](./images/op_jpeg_noise.gif "JPEG noise")|![drawing](./images/op_random_curve.gif "Random curves")|
 | Elastic transformation | Optical transformation | Perspective transformation | Grid distortion  |
@@ -50,20 +50,23 @@ pip install -U git+https://github.com/cta-ai/aug
 
 ## Example usage:
 ```
-from vision import aug
+import aug
 
 class SimpleExample(aug.Pipeline):
     def __init__(self):
         super(SimpleExample, self).__init__()
         self.seq = aug.Sequential(
-            aug.Stretch(p=1, x_scale=.25, y_scale=.25),
             aug.Rotation(p=.5, angle=90),
-            vision.aug.ops.blurs.GaussianBlur(p=1.),
+            aug.GaussianBlur(p=1.),
         )
 
-    def apply(self, image, annotation, mask):
-        sample = aug.Sample(image, annotation, mask)
+    def apply(self, sample):
         return self.seq.apply(sample)
+        
+
+sample = SimpleExample().apply(aug.Sample(image, annotations, masks))
+
+
 ```
 
 More: [Getting started](GETTING_STARTED.md).
@@ -80,4 +83,4 @@ v0.1.0 - 16/07/2019
 
 ## Contact
 
-Project is maintained mainly by Tomasz Gilewicz (@tgilewicz).
+Project is maintained mainly by Tomasz Gilewicz ([@tgilewicz](https://github.com/tgilewicz)).
