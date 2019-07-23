@@ -1,4 +1,6 @@
+import math
 import numpy as np
+
 import aug
 
 
@@ -54,7 +56,11 @@ class Pad(aug.Operation):
         else:
             raise Exception("Unknown value")
 
-        image = np.pad(image, ((self._top, bottom), (self._left, right), (0, 0)),
+        padding = ((self._top, bottom), (self._left, right), )
+        if image.ndim == 3:
+            padding += ((0, 0), )
+
+        image = np.pad(image, padding,
                        'constant', constant_values=(self._value, self._value))
 
         return image
@@ -67,6 +73,24 @@ class Pad(aug.Operation):
 
     def apply_on_masks(self, masks):
         # TODO handle values other than 0
+        return np.array([self.apply_on_image(mask) for mask in list(masks)])
+
+
+class PadToMultiple(aug.Operation):
+    def __init__(self, divisor):
+        self._divisor = divisor
+
+    def apply_on_image(self, image):
+
+        h = math.ceil(image.shape[0]//float(self._divisor)) * self._divisor
+        w = math.ceil(image.shape[1]//float(self._divisor)) * self._divisor
+
+        print(h, w)
+
+        return Pad(shape=(h, w), horizontal="left", vertical="top", value=0).apply_on_image(image)
+
+    def apply_on_masks(self, masks):
+        print(masks.shape)
         return np.array([self.apply_on_image(mask) for mask in list(masks)])
 
 
