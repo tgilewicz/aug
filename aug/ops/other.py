@@ -85,12 +85,9 @@ class PadToMultiple(aug.Operation):
         h = math.ceil(image.shape[0]//float(self._divisor)) * self._divisor
         w = math.ceil(image.shape[1]//float(self._divisor)) * self._divisor
 
-        print(h, w)
-
         return Pad(shape=(h, w), horizontal="left", vertical="top", value=0).apply_on_image(image)
 
     def apply_on_masks(self, masks):
-        print(masks.shape)
         return np.array([self.apply_on_image(mask) for mask in list(masks)])
 
 
