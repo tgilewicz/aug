@@ -18,13 +18,13 @@ setuptools.setup(
     license="Apache License 2.0",
     keywords="data augmentation artificial synthesis machine learning",
     install_requires=[
-        "imageio==2.5.0",
-        "matplotlib==3.1.0",
-        "numpy==1.16.4",
-        "opencv-python==4.1.0.25",
-        "Pillow==6.0.0",
-        "requests==2.22.0",
-        "scipy==1.3.0"
+        "imageio>=2.5.0",
+        "matplotlib>=3.1.0",
+        "numpy>=1.16.4",
+        "opencv-python>=4.1.0.25",
+        "Pillow>=6.0.0",
+        "requests>=2.22.0",
+        "scipy>=1.3.0"
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
