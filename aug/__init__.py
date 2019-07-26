@@ -20,3 +20,4 @@ from aug.ops.blending import *
 from aug.ops.blurs import *
 from aug.ops.ensembles import *
 from aug.ops.other import *
+from aug.ops.annotations import *

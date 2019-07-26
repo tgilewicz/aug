@@ -1,7 +1,9 @@
 import random
+
 import cv2
 import numpy as np
 
+import aug
 from aug import Operation, perform_randomly
 
 
@@ -117,7 +119,6 @@ class Rotation(Operation):
         return np.array([self.apply_on_image(mask) for mask in list(masks)])
 
 
-
 @perform_randomly
 class Stretch(Operation):
 
@@ -165,6 +166,8 @@ class VerticalFlip(Operation):
         if self._h is not None:
             annotations[:, :, 1] = self._h - annotations[:, :, 1]
 
+        annotations = aug.AnnotationOrderFix().apply_on_annotations(annotations)
+
         return annotations
 
     def apply_on_masks(self, masks):
@@ -185,6 +188,7 @@ class HorizontalFlip(Operation):
         if self._w is not None:
             annotations[:, :, 0] = self._w - annotations[:, :, 0]
 
+        annotations = aug.AnnotationOrderFix().apply_on_annotations(annotations)
         return annotations
 
     def apply_on_masks(self, masks):
