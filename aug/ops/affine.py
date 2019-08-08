@@ -10,7 +10,7 @@ from aug import Operation, perform_randomly
 class RotationWithBound(Operation):
 
     def __init__(self,
-                 angle,
+                 angle=aug.uniform(-30, 30),
                  interpolation=cv2.INTER_LINEAR,
                  mode=cv2.BORDER_CONSTANT,
                  border_value=(255, 255, 255),

@@ -17,7 +17,7 @@ class Pass(aug.Operation):
 class Pad(aug.Operation):
     """ Pad image to fixed size. """
 
-    def __init__(self, shape, horizontal="center", vertical="center", value=0):
+    def __init__(self, shape=(1024, 1024), horizontal="center", vertical="center", value=0):
         assert horizontal in ['left', 'center', 'right']
         assert vertical in ['top', 'center', 'bottom']
 
@@ -77,13 +77,13 @@ class Pad(aug.Operation):
 
 
 class PadToMultiple(aug.Operation):
-    def __init__(self, divisor):
+    def __init__(self, divisor=32):
         self._divisor = divisor
 
     def apply_on_image(self, image):
 
-        h = math.ceil(image.shape[0]//float(self._divisor)) * self._divisor
-        w = math.ceil(image.shape[1]//float(self._divisor)) * self._divisor
+        h = math.ceil(image.shape[0]/float(self._divisor)) * self._divisor
+        w = math.ceil(image.shape[1]/float(self._divisor)) * self._divisor
 
         return Pad(shape=(h, w), horizontal="left", vertical="top", value=0).apply_on_image(image)
 

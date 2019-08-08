@@ -40,7 +40,7 @@ class Dilatation(Operation):
         return Erosion(kernel_size=self._kernel_size, reversed=True).apply_on_image(image)
 
 
-class BoundingBoxesFinder(Operation):
+class BoundingBoxesFinder(object):
     """ Find bounding boxes of letters. """
 
     def apply_on_image(self, in_image):
@@ -91,8 +91,7 @@ class BoundingBoxesFinder(Operation):
         return crop_borders
 
 
-@perform_randomly
-class SeparatedLettersErosionOrDilatation(Operation):
+class SeparatedLettersErosionOrDilatation:
     EROSION_MODE = 0
     DILATATION_MODE = 1
     MIX_MODE = 2
@@ -175,41 +174,6 @@ class SeparatedLettersErosionOrDilatation(Operation):
 
 
 @perform_randomly
-class SeparatedLettersErosion(Operation):
-
-    def __init__(self):
-        # TODO add input parameters
-        pass
-
-    def apply_on_image(self, image):
-        image = cv2.cvtColor(image, cv2.COLOR_BGRA2GRAY)
-        _, image = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY)
-        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2, 2))
-        image = cv2.copyMakeBorder(image,
-                                   1,
-                                   1,
-                                   1,
-                                   1,
-                                   borderType=cv2.BORDER_CONSTANT,
-                                   value=(255, 255, 255, 255))
-
-        borders = BoundingBoxesFinder().apply_on_image(image)
-        image = 255 - image
-
-        for b in borders:
-            y1, y2, x1, x2 = b
-            single_letter = image[y1:y2, x1:x2]
-            single_letter = cv2.erode(single_letter, kernel, iterations=random.randint(0, 4))
-            image[y1:y2, x1:x2] = single_letter
-
-        image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGBA)
-        image[:, :, 3] = 255
-        image = 255 - image
-
-        return image
-
-
-@perform_randomly
 class ScatterLetters(Operation):
 
     def __init__(self, max_dev_ox=0.02, max_dev_oy=0.15):
@@ -239,38 +203,6 @@ class ScatterLetters(Operation):
             image[tmp_y1:tmp_y2, tmp_x1:tmp_x2] = tmp_tensor
 
         return cv2.resize(image, (im_width, im_height), interpolation=cv2.INTER_CUBIC)
-
-
-@perform_randomly
-class PixelizedShape(Operation):
-
-    def __init__(self, pixel_size=2, color=None):
-        self._pixel_size = pixel_size
-        self._color = color
-
-    def apply_on_image(self, image):
-        if self._color is None:
-            self._color = [0, 0, 0, 255]
-
-        image = 255 - image
-        ox_number = image.shape[1] / self._pixel_size
-        oy_number = image.shape[0] / self._pixel_size
-
-        image2 = np.zeros(image.shape, dtype=np.uint8)
-        image2[:, :, :3] = 255
-
-        for i in range(ox_number):
-            for j in range(oy_number):
-                h = j * self._pixel_size
-                w = i * self._pixel_size
-
-                if np.sum(image[h:h + self._pixel_size, w:w + self._pixel_size, :3]) != 0:
-                    image2[h:h + self._pixel_size, w:w + self._pixel_size, :4] = self._color
-
-        b = 3
-        utils.copy_make_border(image2, top=b, bottom=b, left=b, right=b)
-
-        return image2
 
 
 @perform_randomly

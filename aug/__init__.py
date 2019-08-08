@@ -25,6 +25,7 @@ from aug.ops.annotations import *
 
 __all__ = [
     # Core
+    "BaseWrapper",
     "Choice",
     "LenaSample",
     "Operation",
