@@ -21,3 +21,71 @@ from aug.ops.blurs import *
 from aug.ops.ensembles import *
 from aug.ops.other import *
 from aug.ops.annotations import *
+
+
+__all__ = [
+    # Core
+    "Choice",
+    "LenaSample",
+    "Operation",
+    "Pipeline",
+    "Sample",
+    "Sequential",
+    "Shuffle",
+    "TestPipeline",
+
+    "uniform",
+    "rand_bool",
+    "truncnorm",
+    "perform_randomly",
+
+    # Operations
+    "BlendWithRandomImage",
+    "Brightness",
+    "CameraFlare",
+    "ChannelShuffle",
+    "Clahe",
+    "Contrast",
+    "CutOut",
+    "Dilatation",
+    "ElasticDistortion",
+    "Erosion",
+    "Flashlight",
+    "Gamma",
+    "GaussNoise",
+    "GaussianBlur",
+    "GridDistortion",
+    "HaloEffect",
+    "HorizontalFlip",
+    "Inversion",
+    "Jitter",
+    "JpegNoise",
+    "LinearGradient",
+    "MedianBlur",
+    "MotionBlur",
+    "OpticalDistortion",
+    "Pad",
+    "PadToMultiple",
+    "Pairing",
+    "Pass",
+    "PepperNoise",
+    "PerspectiveDistortion",
+    "Pixelize",
+    "RadialGradient",
+    "RandomCurveContour",
+    "RandomShapeShadow",
+    "Rotation",
+    "Rotation90",
+    "SaltNoise",
+    "Scratches",
+    "TextureModification",
+    "VariableBlur",
+    "VerticalFlip",
+    "Zoom",
+
+    # Ensembles
+    "Blurs",
+    "ColorAdjustment",
+    "Geometric",
+    "Noises",
+]
