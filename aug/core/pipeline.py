@@ -5,6 +5,8 @@ import random
 from aug.core.sample import LenaSample
 import aug
 
+from copy import deepcopy
+
 from multiprocessing.pool import ThreadPool
 
 
@@ -52,8 +54,26 @@ class Pipeline(object):
         assert isinstance(sample.image, np.ndarray)
         assert sample.image.shape[0] > 0 and sample.image.shape[1] > 0
 
+        sample_orig = deepcopy(sample)
         sample = self.apply(sample)
 
+        drawing_orig = Pipeline.draw_sample(sample_orig)
+        drawing = Pipeline.draw_sample(sample)
+
+        cv2.putText(drawing_orig, 'orig', (0, int(drawing_orig.shape[0] * .98)),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+
+        cv2.putText(drawing, 'aug', (0, int(drawing_orig.shape[0] * .98)),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+
+        drawing = np.concatenate((drawing_orig, drawing), axis=1)
+
+        cv2.imshow("Image", drawing)
+        cv2.waitKey()
+        cv2.destroyAllWindows()
+
+    @staticmethod
+    def draw_sample(sample):
         if sample.image.ndim == 2:
             sample.image = np.expand_dims(sample.image, axis=2)
 
@@ -75,9 +95,7 @@ class Pipeline(object):
                     cv2.circle(sample.image, tuple(point),
                                max(2, int(.005 * min(sample.image.shape[:2]))), (0, 255, 0), -1)
 
-        cv2.imshow("Image", sample.image)
-        cv2.waitKey()
-        cv2.destroyAllWindows()
+        return sample.image
 
 
 class TestPipeline(Pipeline):
