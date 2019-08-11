@@ -76,54 +76,62 @@ class ElasticTransformation(Operation):
                  sigma=10.,
                  alpha_affine_range=10.,
                  interpolation=cv2.INTER_LINEAR,
-                 border_mode=cv2.BORDER_REFLECT_101,
-                 random_state=None):
+                 border_mode=cv2.BORDER_REFLECT_101):
         self._alpha = alpha
         self._sigma = sigma
         self._alpha_affine = alpha_affine_range
-        self._random_state = random_state
         self._interpolation = interpolation
         self._border_mode = border_mode
 
-    def apply_on_image(self, image):
-        if self._random_state is None:
-            self._random_state = np.random.RandomState(1234)
-
-        h, w = image.shape[:2]
-
-        # Random affine
-        center_square = np.float32((h, w)) // 2
-        square_size = min((h, w)) // 3
         self._alpha = float(self._alpha)
         self._sigma = float(self._sigma)
         self._alpha_affine = float(self._alpha_affine)
+
+        self._mapx = None
+        self._mapy = None
+        self._matrix = None
+
+    def apply_on_image(self, image):
+        h, w = image.shape[:2]
+
+        if self._mapx is not None and self._mapy is not None and self._matrix is not None:
+            image = cv2.warpAffine(image,
+                                   self._matrix, (w, h),
+                                   flags=self._interpolation,
+                                   borderMode=self._border_mode)
+
+            return cv2.remap(image, self._mapx, self._mapy, self._interpolation, borderMode=self._border_mode)
+
+        # If method is called first time:
+        center_square = np.float32((h, w)) // 2     # Random affine
+        square_size = min((h, w)) // 3
 
         pts1 = np.float32([
             center_square + square_size,
             [center_square[0] + square_size, center_square[1] - square_size],
             center_square - square_size
         ])
-        pts2 = pts1 + self._random_state.uniform(
+        pts2 = pts1 + np.random.uniform(
             -self._alpha_affine, self._alpha_affine, size=pts1.shape).astype(np.float32)
-        matrix = cv2.getAffineTransform(pts1, pts2)
+        self._matrix = cv2.getAffineTransform(pts1, pts2)
 
         image = cv2.warpAffine(image,
-                               matrix, (w, h),
+                               self._matrix, (w, h),
                                flags=self._interpolation,
                                borderMode=self._border_mode)
 
-        dx = gaussian_filter((self._random_state.rand(h, w) * 2 - 1), self._sigma)
+        dx = gaussian_filter((np.random.rand(h, w) * 2 - 1), self._sigma)
         dx = np.float32(dx * self._alpha)
 
-        dy = gaussian_filter((self._random_state.rand(h, w) * 2 - 1), self._sigma)
+        dy = gaussian_filter((np.random.rand(h, w) * 2 - 1), self._sigma)
         dy = np.float32(dy * self._alpha)
 
         x, y = np.meshgrid(np.arange(w), np.arange(h))
 
-        mapx = np.float32(x + dx)
-        mapy = np.float32(y + dy)
+        self._mapx = np.float32(x + dx)
+        self._mapy = np.float32(y + dy)
 
-        return cv2.remap(image, mapx, mapy, self._interpolation, borderMode=self._border_mode)
+        return cv2.remap(image, self._mapx, self._mapy, self._interpolation, borderMode=self._border_mode)
 
     def apply_on_masks(self, masks):
         return np.array([self.apply_on_image(mask) for mask in list(masks)])

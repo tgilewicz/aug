@@ -12,13 +12,11 @@ class RotationWithBound(Operation):
     def __init__(self,
                  angle,
                  interpolation=cv2.INTER_LINEAR,
-                 mode=cv2.BORDER_CONSTANT,
-                 border_value=(255, 255, 255),
+                 mode='replicate',
                  change_size=True):
         self._angle = angle
         self._interpolation = interpolation
         self._mode = mode
-        self._border_value = border_value
         self._change_size = change_size
         self.mtx = None
         self.new_width = None
@@ -26,6 +24,14 @@ class RotationWithBound(Operation):
 
     def apply_on_image(self, image):
         im_height, im_width = image.shape[:2]
+
+        if self._mode == "zeros":
+            mode = cv2.BORDER_CONSTANT
+        elif self._mode == "replicate":
+            mode = cv2.BORDER_REPLICATE
+        else:
+            raise Exception("Unknown mode value.")
+
         if self._change_size:
             center_x, center_y = im_width // 2, im_height // 2
 
@@ -44,8 +50,7 @@ class RotationWithBound(Operation):
             return cv2.warpAffine(image,
                                   self.mtx, (self.new_width, self.new_height),
                                   flags=self._interpolation,
-                                  borderMode=self._mode,
-                                  borderValue=self._border_value)
+                                  borderMode=mode)
 
         if self.mtx is None:
             self.mtx = cv2.getRotationMatrix2D((im_width / 2, im_height / 2), self._angle, 1.0)
@@ -53,19 +58,20 @@ class RotationWithBound(Operation):
         img = cv2.warpAffine(image,
                              self.mtx, (im_width, im_height),
                              flags=self._interpolation,
-                             borderMode=self._mode,
-                             borderValue=self._border_value)
+                             borderMode=mode)
 
         return img
+
+    def apply_on_masks(self, masks):
+        return np.array([self.apply_on_image(mask) for mask in list(masks)])
 
 
 @perform_randomly
 class Rotation(Operation):
 
-    def __init__(self, angle=30, border_value=None, mode='zeros'):
+    def __init__(self, angle=30, mode='replicate'):
         self._angle = angle
         self._mode = mode
-        self._border_value = border_value
         self._mtx = None
 
         self._w_ratio = 1.
@@ -74,19 +80,8 @@ class Rotation(Operation):
     def apply_on_image(self, image):
         im_height, im_width = image.shape[:2]
 
-        if self._border_value is None:
-            self._border_value = [0] * image.shape[2]
-
-        if self._mode == "zeros":
-            mode = cv2.BORDER_CONSTANT
-        elif self._mode == "replicate":
-            mode = cv2.BORDER_REPLICATE
-        else:
-            raise Exception("Unknown mode value.")
-
         rotation_with_bound = RotationWithBound(self._angle,
-                                                border_value=self._border_value,
-                                                mode=mode)
+                                                mode=self._mode)
 
         image = rotation_with_bound.apply_on_image(image)
         self._mtx = rotation_with_bound.mtx

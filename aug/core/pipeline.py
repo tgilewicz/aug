@@ -49,7 +49,7 @@ class Pipeline(object):
     def __str__(self):
         return type(self).__name__
 
-    def show(self, sample):
+    def show(self, sample, annotations=True, masks=True):
         """Apply operations on sample and display results with masks and annotations. """
         assert isinstance(sample.image, np.ndarray)
         assert sample.image.shape[0] > 0 and sample.image.shape[1] > 0
@@ -57,8 +57,9 @@ class Pipeline(object):
         sample_orig = deepcopy(sample)
         sample = self.apply(sample)
 
-        drawing_orig = Pipeline.draw_sample(sample_orig)
-        drawing = Pipeline.draw_sample(sample)
+        drawing_orig = Pipeline.draw_sample(sample_orig, annotations, masks)
+
+        drawing = Pipeline.draw_sample(sample, annotations, masks)
 
         cv2.putText(drawing_orig, 'orig', (0, int(drawing_orig.shape[0] * .98)),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
@@ -66,18 +67,18 @@ class Pipeline(object):
         cv2.putText(drawing, 'aug', (0, int(drawing_orig.shape[0] * .98)),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
 
-        drawing = np.concatenate((drawing_orig, drawing), axis=1)
-
-        cv2.imshow("Image", drawing)
+        cv2.imshow("orig", drawing_orig)
+        cv2.imshow("aug", drawing)
         cv2.waitKey()
         cv2.destroyAllWindows()
 
+
     @staticmethod
-    def draw_sample(sample):
+    def draw_sample(sample, annotations=True, masks=True):
         if sample.image.ndim == 2:
             sample.image = np.expand_dims(sample.image, axis=2)
 
-        if sample.masks is not None:
+        if sample.masks is not None and masks is True:
             for mask in list(sample.masks):
                 mask = np.squeeze(mask)
 
@@ -89,12 +90,11 @@ class Pipeline(object):
                 sample.image[:, :, channel] = np.clip(sample.image[:, :, channel], 0, 255)
                 sample.image = sample.image.astype(np.uint8)
 
-        if sample.annotations is not None:
+        if sample.annotations is not None and annotations is True:
             for anno in sample.annotations:
                 for point in anno:
                     cv2.circle(sample.image, tuple(point),
                                max(2, int(.005 * min(sample.image.shape[:2]))), (0, 255, 0), -1)
-
         return sample.image
 
 

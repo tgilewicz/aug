@@ -564,7 +564,12 @@ class Jitter(Operation):
         self._magnitude = magnitude
 
     def apply_on_image(self, image):
-        w, h, c = image.shape[:3]
+        if image.ndim == 3:
+            w, h, c = image.shape[:3]
+        else:
+            w, h = image.shape[:2]
+            c = 1
+
         magnitude = int(min(w, h) / 10 * self._magnitude)
         noise_x = np.random.randint(magnitude, size=w * h) - magnitude // 2
         noise_y = np.random.randint(magnitude, size=w * h) - magnitude // 2
