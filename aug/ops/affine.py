@@ -151,6 +151,9 @@ class Rotation90(Operation):
             image = np.ascontiguousarray(np.rot90(image))
         return image
 
+    def apply_on_masks(self, masks):
+        return np.array([self.apply_on_image(mask) for mask in list(masks)])
+
 
 @perform_randomly
 class VerticalFlip(Operation):
