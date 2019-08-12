@@ -151,7 +151,7 @@ def distortions():
 def lighting():
     generate_gif(
         "op_global_brightness",
-        [aug.GlobalBrightness(change=i).apply(aug.Sample(lena)).image
+        [aug.Brightness(change=i).apply(aug.Sample(lena)).image
             for i in (.01, .03, .2, .8, .97, .99)])
 
     generate_gif(
@@ -182,11 +182,11 @@ def blending():
 def perspective():
     generate_gif(
         "op_perspective",
-        [aug.PerspectiveTransformation().apply(aug.Sample(lena)).image for _ in range(5)])
+        [aug.PerspectiveDistortion().apply(aug.Sample(lena)).image for _ in range(5)])
 
     generate_gif(
         "op_elastic",
-        [aug.ElasticTransformation(alpha=aug.uniform(50., 200.), sigma=aug.uniform(2., 10.)).apply(
+        [aug.ElasticDistortion(alpha=aug.uniform(50., 200.), sigma=aug.uniform(2., 10.)).apply(
             aug.Sample(lena)).image for _ in range(6)])
 
     generate_gif(

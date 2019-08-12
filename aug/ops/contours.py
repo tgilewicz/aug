@@ -66,8 +66,7 @@ def get_random_offsets(direction, coords, crop):
     return x_offset, y_offset
 
 
-@perform_randomly
-class TemplateContour(Operation):
+class TemplateContour(object):
     """ Load contour from image file and insert in a random position """
 
     def __init__(self, contour, direction=None, contour_width=(.6, .9), margin=None):
@@ -234,8 +233,7 @@ class RandomShapeShadow(Operation):
         return img
 
 
-@perform_randomly
-class CropRandomSideToContour(Operation):
+class CropRandomSideToContour(object):
 
     def __init__(self):
         self._side = Direction(random.randint(0, 3))

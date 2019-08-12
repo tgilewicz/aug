@@ -7,7 +7,7 @@ from aug import Operation, perform_randomly, utils
 
 
 @perform_randomly
-class PerspectiveTransformation(Operation):
+class PerspectiveDistortion(Operation):
 
     def __init__(self, max_warp=0.2, input_mtx=None, return_mtx=False):
         self._max_warp = max_warp
@@ -65,7 +65,7 @@ class PerspectiveTransformation(Operation):
 
 
 @perform_randomly
-class ElasticTransformation(Operation):
+class ElasticDistortion(Operation):
     """
         Based on: https://github.com/albu/albumentations/blob/master/albumentations/augmentations/functional.py
 

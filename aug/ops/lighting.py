@@ -9,7 +9,7 @@ import aug
 
 
 @perform_randomly
-class GlobalBrightness(Operation):
+class Brightness(Operation):
 
     def __init__(self, change=.5):
         """ Adjust global brightness.

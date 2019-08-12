@@ -25,6 +25,9 @@ class AnnotationOutsideImageFix(aug.Operation):
     def apply(self, sample):
         h, w = sample.image.shape[:2]
 
+        if sample.annotations is None:
+            return sample
+
         sample.annotations[:, :, 1] = np.minimum(h, sample.annotations[:, :, 1])
         sample.annotations[:, :, 0] = np.minimum(w, sample.annotations[:, :, 0])
 
