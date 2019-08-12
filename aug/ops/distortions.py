@@ -15,6 +15,7 @@ class Erosion(Operation):
         self._reversed = reversed
 
     def apply_on_image(self, image):
+        image = image.copy()
         self._kernel_size = self._kernel_size if self._kernel_size % 2 != 0 else self._kernel_size + 1
         kernel = np.ones((self._kernel_size, self._kernel_size), np.uint8)
         er, dil = cv2.erode, cv2.dilate

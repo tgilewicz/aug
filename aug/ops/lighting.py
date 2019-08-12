@@ -156,24 +156,27 @@ class CameraFlare(Operation):
         assert 0 < radius <= 1
         self._alpha = alpha
         self._radius = radius
+        self._mask = None
 
     def apply_on_image(self, image):
         im_height, im_width = image.shape[:2]
-        pos_x, pos_y = random.randint(0, im_width), random.randint(0, im_height)
-        avg_dim = (im_height + im_width) / 2
-        radius = int(avg_dim * self._radius)
 
-        # white circle
-        circle = np.zeros((im_height, im_width, 3), np.uint8)
+        if self._mask is None:
+            pos_x, pos_y = random.randint(0, im_width), random.randint(0, im_height)
+            avg_dim = (im_height + im_width) / 2
+            radius = int(avg_dim * self._radius)
 
-        cv2.circle(circle, (pos_x, pos_y), radius, (255, 255, 255), -1)
-        circle = cv2.blur(
-            circle,
-            (int(random.uniform(.15, .25) * avg_dim), int(random.uniform(.15, .25) * avg_dim)))
+            # Draw a white blurred circle
+            mask = np.zeros((im_height, im_width, 3), np.uint8)
 
-        circle = utils.unify_num_of_channels(image, circle)
+            cv2.circle(mask, (pos_x, pos_y), radius, (255, 255, 255), -1)
+            mask = cv2.blur(
+                mask,
+                (int(random.uniform(.15, .25) * avg_dim), int(random.uniform(.15, .25) * avg_dim)))
 
-        dst = cv2.addWeighted(image, 1.0, circle, self._alpha, 0.0)
+            self._mask = utils.unify_num_of_channels(image, mask)
+
+        dst = cv2.addWeighted(image, 1.0, self._mask, self._alpha, 0.0)
 
         return cv2.resize(dst, (im_width, im_height), interpolation=cv2.INTER_CUBIC)
 

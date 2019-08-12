@@ -129,6 +129,8 @@ class RandomCurveContour(Operation):
                     break
 
     def apply_on_image(self, image):
+        image = image.copy()
+
         if self._color is None:
             self._color = [255, 255, 255]
 
@@ -147,6 +149,8 @@ class RandomRadialDirt(Operation):
         self._max_radius = max_radius
 
     def apply_on_image(self, image):
+        image = image.copy()
+
         repeated_dirt_probability = 0.5
         while True:
             center = (random.randint(0, image.shape[1] - 1), random.randint(0, image.shape[0] - 1))
@@ -320,6 +324,8 @@ class RandomEdge(Operation):
         return np.array([points])
 
     def apply_on_image(self, image):
+        image = image.copy()
+
         points = self.get_edge_points(image.shape)
         bg_color = utils.random_bright_color()
         cv2.fillPoly(image, points, bg_color)
@@ -331,15 +337,20 @@ class RandomEdge(Operation):
 class CutOut(Operation):
 
     def __init__(self, size_range=(.1, .2), iterations=2):
-        self._size_range = size_range
+        self._size_norm = random.uniform(*size_range)
+        self._x_norm = 1. - self._size_norm
+        self._y_norm = 1. - self._size_norm
+
         self._iterations = iterations
 
     def apply_on_image(self, image):
         h, w = image.shape[:2]
+        image = image.copy()
 
         for i in range(self._iterations):
-            size = int(min(h, w) * random.uniform(*self._size_range))
-            x, y = random.randint(0, w - size), random.randint(0, h - size)
+            size = int(min(h, w) * self._size_norm)
+
+            x, y = int(w * self._x_norm), int(h * self._y_norm)
             image[y:y + size, x:x + size] = 0
 
         return image

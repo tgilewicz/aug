@@ -48,6 +48,8 @@ class PepperNoise(Operation):
         self._percent = percent
 
     def apply_on_image(self, image):
+        image = image.copy()
+
         channels_num = image.shape[2]
         if self._value is None:
             self._value = [0] * channels_num if channels_num < 4 else [0, 0, 0, 255]
@@ -126,12 +128,14 @@ class Gamma(Operation):
 
 @perform_randomly
 class ChannelShuffle(Operation):
+    def __init__(self):
+        self._ch_arr = [0, 1, 2]
+        random.shuffle(self._ch_arr)
 
     def apply_on_image(self, image):
         assert image.shape[2] in [3, 4]
-        ch_arr = [0, 1, 2]
-        random.shuffle(ch_arr)
-        image = image[..., ch_arr]
+
+        image = image[..., self._ch_arr]
         return image
 
 
@@ -139,6 +143,7 @@ class ChannelShuffle(Operation):
 class Inversion(Operation):
 
     def apply_on_image(self, image):
+        image = image.copy()
         image[:, :, :3] = 255 - image[:, :, :3]
         return image
 

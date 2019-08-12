@@ -20,8 +20,11 @@ class BlendWithRandomImage(Operation):
         """
         super().__init__()
         self._ratio = ratio
+        self._random_image = None
 
     def apply_on_image(self, input_image):
+        if self._random_image is not None:
+            return cv2.addWeighted(input_image, self._ratio, self._random_image, 1 - self._ratio, 0)
 
         h, w = input_image.shape[:2]
         try:
@@ -30,9 +33,9 @@ class BlendWithRandomImage(Operation):
             random_img = Image.open(f)
             random_img = np.array(random_img)
 
-            random_img = utils.unify_num_of_channels(input_image, random_img)
+            self._random_image = utils.unify_num_of_channels(input_image, random_img)
 
-            return cv2.addWeighted(input_image, self._ratio, random_img, 1 - self._ratio, 0)
+            return cv2.addWeighted(input_image, self._ratio, self._random_image, 1 - self._ratio, 0)
 
         except requests.exceptions.ConnectionError as e:
             print('Unable to download image. Error: {}'.format(e))

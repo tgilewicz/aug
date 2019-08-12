@@ -1,5 +1,7 @@
 import unittest
 import aug
+from copy import deepcopy
+import numpy as np
 
 
 def get_available_operations():
@@ -27,9 +29,39 @@ class TestOps(unittest.TestCase):
             #     print(op._wrapped)
 
             if not issubclass(op_class, resizable_ops):
-                self.assertEquals(input_sample.image.shape, output_sample.image.shape)
+                self.assertEqual(input_sample.image.shape, output_sample.image.shape)
             else:
-                self.assertNotEquals(input_sample.image.shape, output_sample.image.shape)
+                self.assertNotEqual(input_sample.image.shape, output_sample.image.shape)
+
+    def test_if_input_images_are_not_modified(self):
+        for op_class in get_available_operations():
+            input_sample = aug.LenaSample()
+            input_sample_tmp = deepcopy(input_sample)
+
+            op = op_class()
+            _ = op.apply(input_sample)
+
+            # if issubclass(op_class, (aug.BaseWrapper, )):
+            #     print(op._wrapped)
+
+            self.assertTrue(np.array_equal(input_sample_tmp.image, input_sample.image))
+            self.assertTrue(np.array_equal(input_sample_tmp.annotations, input_sample.annotations))
+            self.assertTrue(np.array_equal(input_sample_tmp.masks, input_sample.masks))
+
+    def test_if_operations_are_deterministic(self):
+        for op_class in get_available_operations():
+            input_sample = aug.LenaSample()
+
+            op = op_class()
+            sample1 = op.apply(input_sample)
+            sample2 = op.apply(input_sample)
+
+            if issubclass(op_class, (aug.BaseWrapper, )):
+                print(op._wrapped)
+
+            self.assertTrue(np.array_equal(sample1.image, sample2.image))
+            self.assertTrue(np.array_equal(sample1.annotations, sample2.annotations))
+            self.assertTrue(np.array_equal(sample1.masks, sample2.masks))
 
 
 if __name__ == "__main__":
