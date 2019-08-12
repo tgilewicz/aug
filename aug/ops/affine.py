@@ -163,8 +163,7 @@ class VerticalFlip(Operation):
     def apply_on_annotations(self, annotations):
         if self._h is not None:
             annotations[:, :, 1] = self._h - annotations[:, :, 1]
-
-        annotations = aug.AnnotationOrderFix().apply_on_annotations(annotations)
+            annotations = aug.AnnotationOrderFix().apply_on_annotations(annotations)
 
         return annotations
 
@@ -185,8 +184,8 @@ class HorizontalFlip(Operation):
     def apply_on_annotations(self, annotations):
         if self._w is not None:
             annotations[:, :, 0] = self._w - annotations[:, :, 0]
+            annotations = aug.AnnotationOrderFix().apply_on_annotations(annotations)
 
-        annotations = aug.AnnotationOrderFix().apply_on_annotations(annotations)
         return annotations
 
     def apply_on_masks(self, masks):
