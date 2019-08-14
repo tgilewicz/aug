@@ -108,7 +108,7 @@ class Rotation(Operation):
         rotated[:, :, 0] /= self._w_ratio
         rotated[:, :, 1] /= self._h_ratio
 
-        return rotated.astype(np.int32)
+        return rotated
 
     def apply_on_masks(self, masks):
         return np.array([self.apply_on_image(mask) for mask in list(masks)])
@@ -239,7 +239,7 @@ class Zoom(Operation):
             annotations[:, :, 1] -= self._top
             annotations[:, :, 0] /= self._w_ratio
             annotations[:, :, 1] /= self._h_ratio
-            annotations = annotations.astype(np.int32)
+
         return annotations
 
     def apply_on_masks(self, masks):
