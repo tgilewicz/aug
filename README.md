@@ -1,6 +1,6 @@
 <div align="center">
 
-# AUG-alpha
+# AUG<em>-alpha</em>
 
 
 [![PyPI Status](https://badge.fury.io/py/aug.svg)](https://badge.fury.io/py/aug)
