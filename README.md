@@ -2,12 +2,14 @@
 
 # AUG-alpha
 
-**AUG is an open source augmentation library based on OpenCV. The repository contains a set of image transformations for data augmentation and artificial data synthesis.** 
 
 [![PyPI Status](https://badge.fury.io/py/aug.svg)](https://badge.fury.io/py/aug)
 
 
 </div>
+
+**AUG is an open source augmentation library based on OpenCV. The repository contains a set of image transformations for data augmentation and artificial data synthesis.** 
+
 
 ##### Major features:
 
