@@ -130,8 +130,8 @@ def distortions():
         [aug.Erosion(kernel_size=i).apply(aug.Sample(lena.copy())).image for i in range(1, 10, 2)])
 
     generate_gif(
-        "op_dilatation",
-        [aug.Dilatation(kernel_size=i).apply(aug.Sample(lena.copy())).image for i in range(1, 10, 2)])
+        "op_dilation",
+        [aug.Dilation(kernel_size=i).apply(aug.Sample(lena.copy())).image for i in range(1, 10, 2)])
 
     generate_gif(
         "op_texture",

@@ -32,8 +32,8 @@ pip install -U git+https://github.com/cta-ai/aug
 |![drawing](./images/op_jitter.gif "Jitter")|![drawing](./images/op_radial_gradient.gif "Radial Gradient")|![drawing](./images/op_channel_shuffle.gif "Channel Shuffle")|![drawing](./images/op_cutout.gif "Cutout")|
 | Blend with random images | CLAHE | Contrast | Zoom |
 |![drawing](./images/op_blend.gif "Blend wit random images")|![drawing](./images/op_clahe.gif "CLAHE")|![drawing](./images/op_contrast.gif "Contrast")|![drawing](./images/op_zoom.gif "Zoom")|
-| Salt and pepper | Dilatation | Erosion | Texture modification |
-|![drawing](./images/op_salt_pepper.gif "Salt and pepper")|![drawing](./images/op_dilatation.gif "Dilatation")|![drawing](./images/op_erosion.gif "Erosion")|![drawing](./images/op_texture.gif "Texture modification")|
+| Salt and pepper | Dilation | Erosion | Texture modification |
+|![drawing](./images/op_salt_pepper.gif "Salt and pepper")|![drawing](./images/op_dilation.gif "Dilation")|![drawing](./images/op_erosion.gif "Erosion")|![drawing](./images/op_texture.gif "Texture modification")|
 | Flashlight | Flips | Gamma | Random shadow |
 |![drawing](./images/op_flashlight.gif "Flashlight")|![drawing](./images/op_flip.gif "Flips")|![drawing](./images/op_gamma.gif "Gamma")| ![drawing](./images/op_shadow.gif "Random shadow")|
 | Gaussian noise | Brightness | Inversion | Rotation90 |

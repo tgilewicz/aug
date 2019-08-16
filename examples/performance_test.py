@@ -41,7 +41,7 @@ ops = [
     aug.RandomShapeShadow(),
     aug.RandomCurveContour(),
     aug.Erosion(),
-    aug.Dilatation(),
+    aug.Dilation(),
     aug.RandomEdge(),
     aug.Pixelize(),
     aug.GaussianBlur(),

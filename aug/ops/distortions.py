@@ -31,7 +31,7 @@ class Erosion(Operation):
 
 
 @perform_randomly
-class Dilatation(Operation):
+class Dilation(Operation):
 
     def __init__(self, kernel_size=3):
         self._kernel_size = kernel_size
@@ -91,9 +91,9 @@ class BoundingBoxesFinder(object):
         return crop_borders
 
 
-class SeparatedLettersErosionOrDilatation:
+class SeparatedLettersErosionOrDilation:
     EROSION_MODE = 0
-    DILATATION_MODE = 1
+    DILATION_MODE = 1
     MIX_MODE = 2
 
     # padding - distance between countour and box borders
@@ -103,7 +103,7 @@ class SeparatedLettersErosionOrDilatation:
                  iterations=(1, 6),
                  kernel_size=(5, 5),
                  salt_noise=True):
-        assert mode in [self.EROSION_MODE, self.DILATATION_MODE, self.MIX_MODE]
+        assert mode in [self.EROSION_MODE, self.DILATION_MODE, self.MIX_MODE]
 
         self._padding = padding
         self._mode = mode
@@ -147,7 +147,7 @@ class SeparatedLettersErosionOrDilatation:
                                             kernel,
                                             iterations=random.randint(*self._iterations))
 
-                elif self._mode == self.DILATATION_MODE:
+                elif self._mode == self.DILATION_MODE:
                     transformed = cv2.dilate(out,
                                              kernel,
                                              iterations=random.randint(*self._iterations))
