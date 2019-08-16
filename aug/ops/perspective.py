@@ -53,10 +53,9 @@ class PerspectiveDistortion(Operation):
     def apply_on_annotations(self, annotations):
         """Apply transformation on set of points. """
 
-        if self._mtx is not None:
+        if self._mtx is not None and annotations is not None:
             annotations = annotations.astype(np.float32)
             annotations = cv2.perspectiveTransform(annotations, self._mtx)
-            annotations = annotations.astype(np.int32)
 
         return annotations
 

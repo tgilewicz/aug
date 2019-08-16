@@ -48,7 +48,7 @@ __all__ = [
     "Clahe",
     "Contrast",
     "CutOut",
-    "Dilatation",
+    "Dilation",
     "ElasticDistortion",
     "Erosion",
     "Flashlight",

@@ -31,7 +31,7 @@ class GaussNoise(Operation):
         try:
             m = tuple(image.shape[2] * [self._avg])
             s = tuple(image.shape[2] * [self._std_dev])
-        except KeyError:
+        except IndexError:
             m = self._avg
             s = self._std_dev
 
