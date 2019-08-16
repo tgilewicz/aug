@@ -1,6 +1,13 @@
+<div align="center">
+
 # AUG-alpha
 
-AUG is an open source augmentation library based on OpenCV. The repository contains a set of image transformations for data augmentation and artificial data synthesis.
+**AUG is an open source augmentation library based on OpenCV. The repository contains a set of image transformations for data augmentation and artificial data synthesis.** 
+
+[![PyPI Status](https://badge.fury.io/py/aug.svg)](https://badge.fury.io/py/aug)
+
+
+</div>
 
 ##### Major features:
 
@@ -21,7 +28,7 @@ pip install aug
 ```
 
 ##### The latest version, directly from github:
-```
+```bash
 pip install -U git+https://github.com/cta-ai/aug
 ```
 
@@ -49,7 +56,7 @@ pip install -U git+https://github.com/cta-ai/aug
 
 
 ## Example usage:
-```
+```python
 import aug
 
 class SimpleExample(aug.Pipeline):
