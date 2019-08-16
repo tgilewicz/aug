@@ -7,10 +7,16 @@ class AnnotationOrderFix(aug.Operation):
     """Transform points to the [left-top, right-bottom] order. """
     def apply_on_annotations(self, annotations):
         transformed = []
-        for annotation in annotations:
-            min_x, min_y = np.min(annotation, axis=0)
-            max_x, max_y = np.max(annotation, axis=0)
-            transformed.append([[min_x, min_y], [max_x, max_y]])
+
+        if annotations.shape[1] == 2:
+            # If annotations are boxes
+            for annotation in annotations:
+                min_x, min_y = np.min(annotation, axis=0)
+                max_x, max_y = np.max(annotation, axis=0)
+                transformed.append([[min_x, min_y], [max_x, max_y]])
+        elif annotations.shape[1] > 2:
+            # If annotations are polygons
+            transformed = np.flip(annotations, axis=1)
 
         return np.array(transformed)
 
@@ -18,6 +24,9 @@ class AnnotationOrderFix(aug.Operation):
 class AnnotationOutsideImageFix(aug.Operation):
     def apply(self, sample):
         h, w = sample.image.shape[:2]
+
+        if sample.annotations is None:
+            return sample
 
         sample.annotations[:, :, 1] = np.minimum(h, sample.annotations[:, :, 1])
         sample.annotations[:, :, 0] = np.minimum(w, sample.annotations[:, :, 0])

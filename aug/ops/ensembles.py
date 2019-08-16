@@ -50,7 +50,7 @@ class ColorAdjustment(aug.Pipeline):
         super().__init__()
         self.seq = aug.Sequential(
             aug.Choice(
-                aug.GlobalBrightness(p=1., change=aug.uniform(.01, .97)),
+                aug.Brightness(p=1., change=aug.uniform(.01, .97)),
                 aug.Choice(
                     aug.LinearGradient(p=1.,
                                        edge_brightness=(aug.uniform(.0, .05), aug.uniform(.1, .6)),
@@ -74,7 +74,7 @@ class Geometric(aug.Pipeline):
     def __init__(self):
         super().__init__()
         self.seq = aug.Sequential(
-            aug.PerspectiveTransformation(p=.5, max_warp=.12),
+            aug.PerspectiveDistortion(p=.5, max_warp=.12),
             aug.Choice(
                 aug.GridDistortion(num_steps=(10, 10), distort_limit=(.6, 1.4)),
                 # TODO expensive computationally

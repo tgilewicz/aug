@@ -10,7 +10,7 @@ from aug import Operation, perform_randomly
 class RotationWithBound(Operation):
 
     def __init__(self,
-                 angle,
+                 angle=aug.uniform(-30, 30),
                  interpolation=cv2.INTER_LINEAR,
                  mode='replicate',
                  change_size=True):
@@ -108,7 +108,7 @@ class Rotation(Operation):
         rotated[:, :, 0] /= self._w_ratio
         rotated[:, :, 1] /= self._h_ratio
 
-        return rotated.astype(np.int32)
+        return rotated
 
     def apply_on_masks(self, masks):
         return np.array([self.apply_on_image(mask) for mask in list(masks)])
@@ -163,8 +163,7 @@ class VerticalFlip(Operation):
     def apply_on_annotations(self, annotations):
         if self._h is not None:
             annotations[:, :, 1] = self._h - annotations[:, :, 1]
-
-        annotations = aug.AnnotationOrderFix().apply_on_annotations(annotations)
+            annotations = aug.AnnotationOrderFix().apply_on_annotations(annotations)
 
         return annotations
 
@@ -185,8 +184,8 @@ class HorizontalFlip(Operation):
     def apply_on_annotations(self, annotations):
         if self._w is not None:
             annotations[:, :, 0] = self._w - annotations[:, :, 0]
+            annotations = aug.AnnotationOrderFix().apply_on_annotations(annotations)
 
-        annotations = aug.AnnotationOrderFix().apply_on_annotations(annotations)
         return annotations
 
     def apply_on_masks(self, masks):
@@ -240,7 +239,7 @@ class Zoom(Operation):
             annotations[:, :, 1] -= self._top
             annotations[:, :, 0] /= self._w_ratio
             annotations[:, :, 1] /= self._h_ratio
-            annotations = annotations.astype(np.int32)
+
         return annotations
 
     def apply_on_masks(self, masks):
