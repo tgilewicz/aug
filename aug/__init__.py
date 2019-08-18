@@ -21,6 +21,7 @@ from aug.ops.blurs import *
 from aug.ops.ensembles import *
 from aug.ops.other import *
 from aug.ops.annotations import *
+from aug.ops.crops import *
 
 
 __all__ = [
@@ -83,6 +84,8 @@ __all__ = [
     "VariableBlur",
     "VerticalFlip",
     "Zoom",
+    "Crop",
+    "GridCrop",
 
     # Ensembles
     "Blurs",
