@@ -4,7 +4,8 @@
 
 
 [![PyPI Status](https://badge.fury.io/py/aug.svg)](https://badge.fury.io/py/aug)
-
+[![PyPI Status](https://pepy.tech/badge/aug)](https://pepy.tech/project/aug)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 </div>
 
