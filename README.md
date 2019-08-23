@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="images/logo.png">
+
 # AUG<em>-alpha</em>
 
 
