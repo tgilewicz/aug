@@ -249,39 +249,19 @@ class Zoom(Operation):
 class ConstantAspectRatioScaling(Operation):
     """ Resize image with constant aspect ratio. """
 
-    def __init__(self, dst_shape, interpolation=None):
-        self._dst_shape = dst_shape
-        self._interpolation = interpolation
-        self.scale_ratio = None
+    def __init__(self, max_dimension):
+        assert max_dimension
+        self._max_dimension = max_dimension
+        self._ratio = None
 
     def apply_on_image(self, image):
-        height, width = self._dst_shape
-        h, w = image.shape[:2]
-
-        assert width is not None and height is not None
-        assert h is not None and w is not None
-
-        if self._interpolation is None:
-            self._interpolation = cv2.INTER_AREA if \
-                h > self._dst_shape[0] or w > self._dst_shape[1] else cv2.INTER_LINEAR
-
-        if w < h:
-            r = height / float(h)
-            size = (int(round(w * r)), height)
-
-        else:
-            r = width / float(w)
-            size = (width, int(round(h * r)))
-
-        self.scale_ratio = r
-        return cv2.resize(image, size, interpolation=self._interpolation)
+        current_max_dim = np.max(image.shape[:2])
+        self._ratio = 1.0 * self._max_dimension / current_max_dim
+        resized = cv2.resize(image, None, fx=self._ratio, fy=self._ratio)
+        return resized
 
     def apply_on_masks(self, masks):
         return np.array([self.apply_on_image(mask) for mask in list(masks)])
 
     def apply_on_annotations(self, annotations):
-        # TODO test
-        if self.scale_ratio is not None:
-            annotations[:, :, :] *= self.scale_ratio
-
-        return annotations
+        return annotations * self._ratio
