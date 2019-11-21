@@ -265,3 +265,103 @@ class ConstantAspectRatioScaling(Operation):
 
     def apply_on_annotations(self, annotations):
         return annotations * self._ratio
+
+
+@perform_randomly
+class Translation(Operation):
+    def __init__(self, translate_percent=None, translate_px=None, mode=cv2.BORDER_CONSTANT, border_value=(0, 0, 0)):
+        assert (translate_percent and not translate_px) or (translate_px and not translate_percent)
+
+        self._translate_x = 0
+        self._translate_y = 0
+        self._translate_percent = translate_percent
+        self._translate_px = translate_px
+        self._border_value = border_value
+        self._mode = mode
+        self._parse_param()
+
+    def apply_on_image(self, image):
+        im_height, im_width = image.shape[:2]
+        if isinstance(self._translate_x, float):
+            self._translate_x = int(np.round(self._translate_x * im_width))
+        if isinstance(self._translate_y, float):
+            self._translate_y = int(np.round(self._translate_y * im_height))
+
+        translation_mtx = np.float32([[1, 0, self._translate_x], [0, 1, self._translate_y]])
+        return cv2.warpAffine(image, translation_mtx, (im_width, im_height),
+                              flags=cv2.INTER_LINEAR,
+                              borderMode=self._mode,
+                              borderValue=self._border_value)
+
+    def apply_on_annotations(self, annotations):
+        annotations[:, :, 0] += self._translate_x
+        annotations[:, :, 1] += self._translate_y
+        return annotations
+
+    def _parse_param(self):
+        def _parse_single_param(p):
+            if isinstance(p, tuple):
+                assert len(p) == 2
+                a, b = p
+                assert type(a) is type(b)
+                p = int(random.uniform(a, b))
+            assert (isinstance(p, float) and self._translate_percent) or (isinstance(p, int) and self._translate_px)
+            return p
+
+        param = self._translate_percent if self._translate_percent else self._translate_px
+        if isinstance(param, dict):
+            assert "x" in param or "y" in param
+            self._translate_x = _parse_single_param(param.get("x", 0))
+            self._translate_y = _parse_single_param(param.get("y", 0))
+        else:
+            self._translate_x = self._translate_y = _parse_single_param(param)
+
+
+@perform_randomly
+class Scaling(Operation):
+    def __init__(self, scale):
+        self._scale = scale
+        self._resizer = Resize(scale=self._scale)
+
+    def apply_on_image(self, image):
+        return self._resizer.apply_on_image(image)
+
+    def apply_on_annotations(self, annotations):
+        return self._resizer.apply_on_annotations(annotations)
+
+
+@perform_randomly
+class Resize(Operation):
+    def __init__(self, dsize=None, scale=None):
+        assert (dsize and not scale) or (scale and not dsize)
+        if dsize:
+            assert dsize and isinstance(dsize, tuple)
+        else:
+            assert scale > 0 and isinstance(scale, float)
+
+        self._dsize = dsize
+        self._scale = scale
+        self._original_size = None
+
+    def apply_on_image(self, image):
+        im_height, im_width = image.shape[:2]
+        self._original_size = (im_width, im_height)
+
+        if self._scale:
+            d_height = int(np.round(self._scale * im_height))
+            d_width = int(np.round(self._scale * im_width))
+            self._dsize = (d_width, d_height)
+
+        interpolation = cv2.INTER_AREA if im_height > self._dsize[0] or im_width > self._dsize[1] else cv2.INTER_LINEAR
+        return cv2.resize(image, self._dsize, interpolation=interpolation)
+
+    def apply_on_annotations(self, annotations):
+        if self._scale:
+            return annotations * self._scale
+        else:
+            scale_x = self._dsize[0] / self._original_size[0]
+            scale_y = self._dsize[1] / self._original_size[1]
+            annotations = annotations.astype(np.float)
+            annotations[:, :, 0] *= scale_x
+            annotations[:, :, 1] *= scale_y
+            return annotations
