@@ -4,6 +4,7 @@
 
 # AUG<em>-alpha</em>
 
+[Warning, Unmaintained!] Alternatives: imgaug, albumentations, kornia.
 
 [![PyPI Status](https://badge.fury.io/py/aug.svg)](https://badge.fury.io/py/aug)
 [![PyPI Status](https://pepy.tech/badge/aug)](https://pepy.tech/project/aug)
@@ -19,7 +20,6 @@
 * supports operations on masks and points,
 * unified interface - most magnitude coefficients are in the range [0, 1],
 * optimized operations,
-* reusable blocks of operations, e.g. transfer learning based on augmentation parameters (AutoAugment)
 * unique operations compared to imgaug/albumentations,
 * Python 3, OpenCV 4.1.
 
